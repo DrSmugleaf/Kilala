@@ -1,0 +1,1 @@
+LogHelper = use "data/scripts/LogHelper"
