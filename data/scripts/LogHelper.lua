@@ -3,7 +3,6 @@ local LogHelper = {}
 --------------------------------------------------------------
 -- Printing to console functions with mod name and prefixes --
 --------------------------------------------------------------
-local MOD_NAME = "Kilala"
 
 function LogHelper.printDebug(message)
 
