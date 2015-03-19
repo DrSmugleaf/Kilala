@@ -43,6 +43,25 @@ local function onIsRaining(inst, israining)
 end
 
 
+local function readOrbs(inst)
+
+	if inst.orbs > 3 then inst.orbs = 3 end
+	if 
+end
+
+
+local function orbFlare(inst)
+end
+
+
+local function orbLavaAura(inst)
+end
+
+
+local function orbFoxDiety(inst, stats)
+end
+
+
 local function updateStats(inst)
 
 	if raining then
@@ -71,6 +90,23 @@ local function onBecameGhost(inst)
 
 end
 
+local function onpreload(inst, data)
+
+	if data then
+		if data.orbs then
+			inst.orbs = data.orbs
+			updateStats(inst)
+		end
+	end
+
+end
+
+local function onsave(inst,data)
+
+	data.orbs = inst.orbs
+
+end
+
 local common_postinit = function(inst)
 	
 	inst.MiniMapEntity:SetIcon( "kilala.tex" )
@@ -78,8 +114,11 @@ local common_postinit = function(inst)
 end
 
 local master_postinit = function(inst)
+
+	inst.orbs = 0
 	
 	inst.soundsname = "wendy"
+
 
 	inst.components.health:SetMaxHealth(100)
 	inst.components.hunger:SetMax(125)
@@ -90,6 +129,9 @@ local master_postinit = function(inst)
 	inst:ListenForEvent("ms_respawnedfromghost", onBecameHuman)
 	inst:ListenForEvent("ms_becameghost", onBecameGhost)
 	inst:ListenForEvent("death", onDeath)
+
+	inst.OnSave = onsave
+	inst.OnPreLoad = onpreload
 
 	onBecameHuman(inst)
 	updateStats(inst)
