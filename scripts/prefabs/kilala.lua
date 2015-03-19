@@ -35,6 +35,41 @@ local assets = {
 local prefabs = {}
 local start_inv = {}
 
+local function onIsRaining(inst, israining)
+
+	if israining then raining = true
+	else raining = false end
+
+end
+
+
+local function updateStats(inst)
+
+	if raining then
+		inst.components.health:StartRegen(1, 10, false)
+		inst.components.hunger:SetRate(TUNING.WILSON_HUNGER_RATE * 1.6)
+		inst.components.sanity.dapperness = -0.1
+	elseif not raining then
+		inst.components.health:StopRegen()
+		inst.components.hunger:SetRate(TUNING.WILSON_HUNGER_RATE * 1.0)
+		inst.components.sanity.dapperness = 0
+	end
+
+end
+
+
+local function onBecameHuman(inst)
+
+	inst:WatchWorldState("israining", onisraining)
+	onisraining(inst, TheWorld.state.israining)
+
+end
+
+local function onBecameGhost(inst)
+
+	inst:StopWatchingWorldState("israining", onisraining)
+
+end
 
 local common_postinit = function(inst)
 	
@@ -49,6 +84,15 @@ local master_postinit = function(inst)
 	inst.components.health:SetMaxHealth(100)
 	inst.components.hunger:SetMax(125)
 	inst.components.sanity:SetMax(150)
+
+	inst.components.health.fire_damage_scale = TUNING.WILLOW_FIRE_DAMAGE
+
+	inst:ListenForEvent("ms_respawnedfromghost", onBecameHuman)
+	inst:ListenForEvent("ms_becameghost", onBecameGhost)
+	inst:ListenForEvent("death", onDeath)
+
+	onBecameHuman(inst)
+	updateStats(inst)
 
 end
 
